@@ -1,0 +1,9 @@
+<section class="catalogo">
+    <h2>Produtos</h2>
+
+    <div class="grid">
+        <app-card-produto [produto]="produtos[0]" (add)="onAddProduct($event)"></app-card-produto>
+        <app-card-produto [produto]="produtos[1]" (add)="onAddProduct($event)"></app-card-produto>
+        <app-card-produto [produto]="produtos[2]" (add)="onAddProduct($event)"></app-card-produto>
+    </div>
+</section>
