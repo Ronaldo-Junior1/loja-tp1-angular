@@ -7,10 +7,10 @@ import { Component, model } from '@angular/core';
   styleUrl: './quantidade-controle.css'
 })
 export class QuantidadeControle {
-  contador = model<number>(1);
+  contador = model<number>(0);
   
   decrementar(){
-    this.contador.set(Math.max(1,this.contador() - 1));
+    this.contador.set(Math.max(0,this.contador() - 1));
   }
 
   incrementar(){
