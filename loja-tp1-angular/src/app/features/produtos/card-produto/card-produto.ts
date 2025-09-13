@@ -2,10 +2,12 @@ import { Component, input, model, output, signal } from '@angular/core';
 import { Produto } from '../../../model/produto';
 import { QuantidadeControle } from "../../../shared/quantidade-controle/quantidade-controle";
 import { CurrencyPipe } from '@angular/common';
+import { DescontoPipe } from '../../../shared/pipes/desconto-pipe';
+import { TruncarPipe } from '../../../shared/pipes/truncar-pipe';
 
 @Component({
   selector: 'app-card-produto',
-  imports: [QuantidadeControle,CurrencyPipe],
+  imports: [QuantidadeControle,CurrencyPipe,DescontoPipe,TruncarPipe],
   templateUrl: './card-produto.html',
   styleUrl: './card-produto.css'
 })
