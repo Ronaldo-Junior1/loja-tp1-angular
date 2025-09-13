@@ -3,6 +3,7 @@ import { Produto } from '../../../model/produto';
 import { CardProduto } from "../card-produto/card-produto";
 import { ProdutoService } from '../services/produto.service';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { CategoriaService } from '../services/categoria.service';
 
 @Component({
   selector: 'lista-produtos',
@@ -13,11 +14,36 @@ import { toSignal } from '@angular/core/rxjs-interop';
 export class ListaProdutos {
 
   private produtoService = inject(ProdutoService);
+  private categoriaService = inject(CategoriaService);
 
   private produtos = toSignal<Produto[],Produto[]>(this.produtoService.listar(),{initialValue:[]})
-  apenasPromo = signal(false);
 
-  prodExibidos = computed(() => this.apenasPromo() ? this.produtos().filter(p => p.promo) : this.produtos());
+  categorias = toSignal<string[], string[]>(this.categoriaService.listar(),{initialValue:[]});
+  
+
+  apenasPromo = signal(false);
+  categoriaSelecionada = signal<string>('todos');
+
+  prodExibidos = computed(() => {
+    let produtosFiltrados = this.produtos();
+
+    if (this.apenasPromo()) {
+      produtosFiltrados = produtosFiltrados.filter(p => p.promo);
+    }
+
+    if (this.categoriaSelecionada() !== 'todos') {
+      produtosFiltrados = produtosFiltrados.filter(p => p.categoria === this.categoriaSelecionada());
+    }
+
+    return produtosFiltrados;
+  });
+
+
+  onCategoriaChange(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    this.categoriaSelecionada.set(target.value);
+  }
+
 
   alternarPromo(){
     this.apenasPromo.update(p=>!p);

@@ -16,7 +16,8 @@ export class ProdutoService {
       descricao: 'Eu',
       preco: 66.6,
       imageUrl: 'images/logoifsp.png',
-      estado: 'novo'
+      estado: 'novo',
+      categoria: 'Eletronico'
     },
     {
       id: 2,
@@ -24,14 +25,16 @@ export class ProdutoService {
       descricao: 'Um garoto bem sapeca',
       preco: 77.7,
       promo:true,
-      estado: 'usado'
+      estado: 'usado',
+      categoria: 'Eletronico'
     },
     {
       id: 3,
       nome: 'José',
       descricao: 'Do vale',
       preco: 24,
-      estado: 'esgotado'
+      estado: 'esgotado',
+      categoria: 'Arco iris'
     }
   ]
 
