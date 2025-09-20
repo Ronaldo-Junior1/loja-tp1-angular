@@ -6,10 +6,11 @@ import { QuantidadeControle } from "./shared/quantidade-controle/quantidade-cont
 import { CardProduto } from "./features/produtos/card-produto/card-produto";
 import { Produto } from './model/produto';
 import { ListaProdutos } from "./features/produtos/lista-produtos/lista-produtos";
+import { RouterOutlet } from "@angular/router";
 
 @Component({
   selector: 'app-root',
-  imports: [Header, Footer, Banner, ListaProdutos],
+  imports: [Header, Footer, Banner, RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
