@@ -3,7 +3,7 @@ import { Produto } from '../../../model/produto';
 import { CardProduto } from "../card-produto/card-produto";
 import { ProdutoService } from '../services/produto.service';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'lista-produtos',
@@ -13,8 +13,13 @@ import { Router } from '@angular/router';
 })
 export class ListaProdutos {
 
+  private route = inject(ActivatedRoute);
+
+  
+
   private router = inject(Router);
   private produtoService = inject(ProdutoService);
+
 
   private produtos = toSignal<Produto[],Produto[]>(this.produtoService.listar(),{initialValue:[]})
   apenasPromo = signal(false);
@@ -24,6 +29,7 @@ export class ListaProdutos {
   alternarPromo(){
     this.apenasPromo.update(p=>!p);
   }
+
   onAddProduct(produto:{id:number, quantity:number}){
     alert(`Produto: ${produto.id}, Quantidade: ${produto.quantity}`);
   }
@@ -31,4 +37,14 @@ export class ListaProdutos {
   onViewProduct(id:number){
     this.router.navigate(['/produtos',id])
   }
+
+
+  constructor() {
+    this.route.queryParamMap.subscribe(params => {
+      const promoParam = params.get('promo');
+      const isPromo = promoParam === 'true';
+      this.apenasPromo.set(isPromo);
+    });
+  }
+  
 }
