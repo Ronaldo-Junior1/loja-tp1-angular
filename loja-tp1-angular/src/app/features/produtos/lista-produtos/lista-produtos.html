@@ -10,11 +10,16 @@
             }
         </button>
     </header>
-    <div class="grid">
-        @for (prod of prodExibidos(); track prod.id) {
-            <app-card-produto [produto]="prod" (add)="onAddProduct($event)" (view)="onViewProduct($event)"></app-card-produto>
-        } @empty {
-            <p class="vazio">Nenhum produto encontrado para o filtro atual</p>
-        }
-    </div>
+    @if(loading()){
+        <p>Carregando produtos...</p>
+    }
+    @else{      
+        <div class="grid">
+            @for (prod of prodExibidos(); track prod.id) {
+                <app-card-produto [produto]="prod" (add)="onAddProduct($event)" (view)="onViewProduct($event)"></app-card-produto>
+            } @empty {
+                <p class="vazio">Nenhum produto encontrado para o filtro atual</p>
+            }
+        </div>
+    }
 </section>
