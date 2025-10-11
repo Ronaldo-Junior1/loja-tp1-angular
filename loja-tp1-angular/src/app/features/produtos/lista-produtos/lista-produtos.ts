@@ -5,6 +5,7 @@ import { ProdutoService } from '../services/produto.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs';
+import { CategoriaService } from '../services/categoria-service';
 
 @Component({
   selector: 'lista-produtos',
@@ -18,12 +19,28 @@ export class ListaProdutos {
   private router = inject(Router);
   loading = signal(true);
   private produtoService = inject(ProdutoService);
+  private categoriaService = inject(CategoriaService);
+  categoriaSelecionada = signal<string>('todos');
+
 
 
   private produtos = toSignal<Produto[],Produto[]>(this.produtoService.listar().pipe(finalize(()=> this.loading.set(false))),{initialValue:[]})
+  categorias = toSignal<string[], string[]>(this.categoriaService.listar().pipe(finalize(()=> this.loading.set(false))),{initialValue:[]});
   apenasPromo = signal(false);
 
-  prodExibidos = computed(() => this.apenasPromo() ? this.produtos().filter(p => p.promo) : this.produtos());
+  prodExibidos = computed(() => {
+    let prods = this.produtos();
+  
+    if(this.categoriaSelecionada() !== 'todos') {
+      prods = prods.filter(p => p.categoria === this.categoriaSelecionada());
+    }
+  
+    if(this.apenasPromo()) {
+      prods = prods.filter(p => p.promo);
+    }
+  
+    return prods;
+  });
 
   alternarPromo(){
     this.apenasPromo.update(p=>!p);
@@ -37,6 +54,10 @@ export class ListaProdutos {
     this.router.navigate(['/produtos',id])
   }
 
+  onCategoriaChange(event: Event) {
+    const target = event.target as HTMLSelectElement;
+    this.categoriaSelecionada.set(target.value);
+  }
 
   constructor() {
     this.route.queryParamMap.subscribe(params => {

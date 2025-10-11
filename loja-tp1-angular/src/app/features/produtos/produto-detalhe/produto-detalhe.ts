@@ -30,7 +30,7 @@ export class ProdutoDetalhe {
       }
       this.loading.set(true);
       this.produtoService.getById(id).subscribe(p => {
-        this.produto.set(p);
+        this.produto.set(p as Produto);
         this.loading.set(false);
       });
     }
