@@ -1,3 +1,4 @@
+# Nome da pipeline que sera exibida nos logs quando ele estiver sendo executado
 name: Deploy
 # Trigger que dita em quais ocasiões a automação vai rodar, nesse caso seriam 2 triggers
 on:
@@ -21,9 +22,12 @@ jobs:
     # Aqui vamos definir os passos que vão ser executados na nossa automatização, vamos definir um nome para o passo (o que não é obrigatorio, mas recomendado)
     # Logo apos precisamos definir se esse passo vai ser do tipo 'uses' ou 'run'
     # Cada item com um ' - ' é um passo a ser executado.
-    
+
+    #Utilizamos o defaults para adicionar uma configuração padrão que sera utilizada em todos os passos da automatização
     defaults:
+    # aqui definimos que essa configuração padrão so sera aplicada nos passos que utilzam o comando run, ou seja os passos que executam um comando no terminal
       run:
+      # Aqui definimos que pra cada comando, precisamos que ele antes de executar, troque para esse diretorio e fique dentro da pasta loja-tp1-angular
         working-directory: ./loja-tp1-angular
         
     steps:
