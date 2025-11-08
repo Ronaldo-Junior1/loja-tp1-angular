@@ -1,0 +1,83 @@
+name: Deploy
+# Trigger que dita em quais ocasiões a automação vai rodar, nesse caso seriam 2 triggers
+on:
+  # Diz que sera executado sempre que ouver um push
+  push:
+    # Aqui é especificado que sera quando for um push e for dentro da main
+    branches:
+      - main
+  # Mesma coisa que o de cima, dizemos que tambem sera acionado quando for executado um pull request
+  pull_request:
+  # E aqui é especificado que sera quando for um pull request e ele for na branch main
+    branches:
+      - main
+
+# Aqui dizemos quais tarefas(jobs) serão executadas quando uma daquelas triggers forem acionadas
+jobs:
+  # Aqui definimos o nome da tarefa e apos isso precisamos dizer aonde ela vai rodar e quais são os seus passos
+  deploy-projeto:
+  # É definido que o job ira rodar em uma maquina virtual com o sistema operacional ubunto, que vai executar os passos(steps) desse job
+    runs-on: ubuntu-latest
+    # Aqui vamos definir os passos que vão ser executados na nossa automatização, vamos definir um nome para o passo (o que não é obrigatorio, mas recomendado)
+    # Logo apos precisamos definir se esse passo vai ser do tipo 'uses' ou 'run'
+    # Cada item com um ' - ' é um passo a ser executado.
+    
+    defaults:
+      run:
+        working-directory: ./loja-tp1-angular
+        
+    steps:
+      # Passo 1: fazemos o checkout do codigo, que seria basicamente puxar o codigo do meu projeto para a maquina virtual, fazendo basicamente um 'git clone' do projeto para a maquina
+      # name é o nome que ficara no log quando for executado esse passo.
+      - name: Checkout
+      # o uses significa que vamos utilizar uma action ja pronta, quase como se estivessimos chamando uma função ja pronta para utilizarmos, aqui usamos a action de realizar o checkout do codigo
+        uses: actions/checkout@v4
+
+      # Passo 2: Instalamos o para dentro da maquina virtual que estamos utilizando, para a mesma ser capaz de executar os comandos npm
+      # name é o nome que ficara no log quando for executado esse passo.
+      - name: Setup node
+      # o uses significa que vamos utilizar uma action ja pronta, quase como se estivessimos chamando uma função ja pronta para realizar o setup do node na maquina virtual
+        uses: actions/setup-node@v4
+        # o with indica que vamos passar parametros para a action de setup-node, que no caso vamos passar a versão que desejamos do node
+        with:
+          node-version: 'lts/*' # Definimos a versão do node para a mais recente
+
+      # Passo 3: aqui vamos utilzar o comando npm ci para instalar as dependencias que existem no nosso arquivo 'package-lock.json'
+      # name é o nome que ficara no log quando for executado esse passo.
+      - name: Install dependencies
+      # usamos o run para executar um comando no terminal da maquina de virtual que criamos, nesse caso ele vai executar o npm ci no terminal
+        run: npm ci
+
+      # Passo 4: Executamos outro comando via terminal para instalar o CLI do vercel, para conseguirmos conversar com o vercel e realizar o deploy
+       # name é o nome que ficara no log quando for executado esse passo.
+      - name: Install Vercel
+      # usamos o run para executar um comando no terminal da maquina de virtual que criamos, nesse caso ele vai executar o npm install -g vercel@latest no terminal
+        run: npm install -g vercel@latest
+        
+      # Passo 5: Aqui iremos realizar o deploy para o vercel quando for executado um pull_request, aqui iremos criar uma url unica para preview das alterações feitas no PR
+       # name é o nome que ficara no log quando for executado esse passo.
+      - name: Deploy (Preview Pull request)
+        # Dizemos com o if que esse passo so sera executado se a ação realizada for um pull request
+        if: github.event_name == 'pull_request'
+        # Comando de deploy do vercel, junto com as variaveis para ser realizada a autenticação do vercel
+        run: vercel --token ${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_ORG_ID }}
+        # Injetamos as secrets que foram cadastradas no repositorio do github, para que o vercel consiga se autenticar
+        env:
+          # injetamos o org id que é basicamente a conta em que ele vai procurar o token de autenticaçao
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          # injetamos o project id que é basicamente o projeto dentro da conta em que ele vai fazer a alteração
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          
+      #Passo 6: Aqui nesse passo vamos realizar o deploy quando for executado um push para dentro da main, diferente do outro que so é executado quando for um PR
+      # esse vai realizar o deploy no dominio principal do projeto ou seja, como se esse fosse o ambiente de "prod"
+      - name: Deploy Prod (Push)
+        # Dizemos que ele so vai ser executado quando a ação for um push para dentro da main
+        if: github.ref == 'refs/heads/main'
+        # Aqui, diferente do outro, adicionamos o argumento --prod, para esse deploy ser realizado no dominio principal do projeto, junto com o token de autenticação
+        run: vercel --prod --token ${{ secrets.VERCEL_TOKEN }} --scope ${{ secrets.VERCEL_ORG_ID }}
+        # Injetamos as secrets que foram cadastradas no repositorio do github, para que o vercel consiga se autenticar
+        env:
+         # injetamos o org id que é basicamente a conta em que ele vai procurar o token de autenticaçao
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          # injetamos o project id que é basicamente o projeto dentro da conta em que ele vai fazer a alteração
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
