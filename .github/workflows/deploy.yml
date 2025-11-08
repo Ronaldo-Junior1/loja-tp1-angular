@@ -21,6 +21,11 @@ jobs:
     # Aqui vamos definir os passos que vão ser executados na nossa automatização, vamos definir um nome para o passo (o que não é obrigatorio, mas recomendado)
     # Logo apos precisamos definir se esse passo vai ser do tipo 'uses' ou 'run'
     # Cada item com um ' - ' é um passo a ser executado.
+    
+    defaults:
+      run:
+        working-directory: ./loja-tp1-angular
+        
     steps:
       # Passo 1: fazemos o checkout do codigo, que seria basicamente puxar o codigo do meu projeto para a maquina virtual, fazendo basicamente um 'git clone' do projeto para a maquina
       # name é o nome que ficara no log quando for executado esse passo.
