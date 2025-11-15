@@ -37,6 +37,10 @@ export class ListaProdutos {
     this.router.navigate(['/produtos',id])
   }
 
+  onCreateProduct(rota: string){
+    this.router.navigate([rota]);
+  }
+
 
   constructor() {
     this.route.queryParamMap.subscribe(params => {

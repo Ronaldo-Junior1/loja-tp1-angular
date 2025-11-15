@@ -5,6 +5,7 @@ export interface Produto {
     descricao: string;
     imageUrl?: string;
     promo?: boolean;
+    categoria: string;
     estado?: 'novo' | 'usado' | 'esgotado';
 }
 
@@ -20,7 +21,8 @@ export class ProdutoMapper{
             descricao: json.description,
             imageUrl: json.image,
             estado: _estado,
-            promo: json.id % 5 == 0 && _estado != 'esgotado'
+            promo: json.id % 5 == 0 && _estado != 'esgotado',
+            categoria: json.category
         }
     }
 
@@ -31,7 +33,7 @@ export class ProdutoMapper{
             price: produto.preco,
             description: produto.descricao,
             image: produto.imageUrl,
-            category: 'general'
+            category: produto.categoria
         }
     }
 }
